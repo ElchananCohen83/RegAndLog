@@ -34,7 +34,7 @@
             box-sizing: border-box;
         }
 
-        .registration-container {
+        .login-container {
             text-align: right;
             margin-top: 10px;
         }
@@ -46,7 +46,7 @@
         }
 
         .message-label {
-            color: white;
+            color: red;
         }
 
         .form-container h2 {
@@ -57,18 +57,19 @@
             .form-control {
                 width: 100%;
             }
-            .registration-container {
-                text-align: left; /* Adjust for smaller screens if needed */
+            .Login-container {
+                text-align: left;
             }
 
             #btnregister {
-                width: 100%; /* Make the button full width on smaller screens */
-            }   
+                width: 100%;
+            }
+            
         }
     </style>
 </head>
 <body>
-    <form id="form2" runat="server" class="form-container">
+    <form id="form" runat="server" class="form-container">
         <h2>הרשמה</h2>
 
         <asp:TextBox ID="txtFirstname" runat="server" Placeholder="שם פרטי" required="true" CssClass="form-control"></asp:TextBox>
@@ -86,13 +87,15 @@
         <asp:TextBox ID="txtConfirmPassword" runat="server" TextMode="Password" Placeholder="ConfirmPassword" autocomplete="new-password" required CssClass="form-control"></asp:TextBox>
         <br />
 
-        <div class="registration-container">
+        <asp:Button ID="btnregister" runat="server" OnClick="Register_Click" Text="הרשמה" />
+        <br />
+
+        <div class="login-container">
             <span>להתחברות לחץ</span>
             <asp:LinkButton ID="LoginLink" runat="server" OnClick="Login_Click" Text="כאן"></asp:LinkButton>
         </div>
         <br />
 
-        <asp:Button ID="btnregister" runat="server" OnClick="Register_Click" Text="הרשמה" />
 
         <asp:Label ID="lblMessage" runat="server" CssClass="message-label"></asp:Label>
     </form>

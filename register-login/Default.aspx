@@ -11,9 +11,6 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-        }
-
-        #formContainer {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -25,8 +22,9 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
             width: 100%;
+            max-width: 400px;
+            text-align: center;
         }
 
         .form-control {
@@ -41,67 +39,71 @@
             margin-top: 10px;
         }
 
-        #login {
+        #title{
+            display: block;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        #btnLogin{
+            width: 200px;
+            padding: 15px;
+            font-size: 16px;
+        }
+
+        #btnValidateKey{
             width: 200px;
             padding: 15px;
             font-size: 16px;
         }
 
         .message-label {
-            color: white;
+            color: red;
         }
 
         @media (max-width: 600px) {
-            /* Responsive styles for smaller screens */
             .form-control {
                 width: 100%;
             }
 
             .registration-container {
-                text-align: left; /* Adjust for smaller screens if needed */
+                text-align: left;
             }
 
-            #login {
-                width: 100%; /* Make the button full width on smaller screens */
+            #btnLogin #btnValidateKey {
+                width: 100%;
             }   
         }
     </style>
 </head>
 <body>
-    <form id="form1" runat="server">
-        <div id="formContainer" runat="server">
-            <div class="form-container">
-                <h2>התחברות</h2>
+    <form id="form" runat="server" class="form-container">
 
-                <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" type="email" Placeholder="אימייל" required></asp:TextBox>
+                <asp:Label ID="title" runat="server">התחברות</asp:Label>
+                <br />
+
+                <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" type="email" Placeholder="אימייל"  required></asp:TextBox>
                 <br />
 
                 <asp:TextBox ID="txtPassword" runat="server" TextMode="Password" Placeholder="Password" autocomplete="new-password" CssClass="form-control" required></asp:TextBox>
                 <br />
 
-                <div class="registration-container">
-                    <span>אין לך חשבון? הירשם</span>
-                    <asp:LinkButton ID="RegiterLink" runat="server" OnClick="Register_Click" Text="כאן"></asp:LinkButton>
-                </div>
-                <br />
-
-                <asp:Button value="btn" OnClick="Login_Click" ID="login" runat="server" Text="התחברות"/>
+                <asp:Button value="btn" OnClick="Login_Click" ID="btnLogin" runat="server" Text="התחברות"/>
                 <br />
 
                 <asp:Label ID="lblMessage" runat="server"></asp:Label>
                 <br />
 
-                <asp:Label ID="LabelKey" runat="server" Visible="false"></asp:Label>
+                <asp:TextBox runat="server" ID="txtKey" Visible="false" CssClass="form-control" Placeholder="הזן כאן את קוד האימות"></asp:TextBox>
                 <br />
 
-                <asp:TextBox runat="server" ID="txtKey" Visible="false" />
+                <asp:Button UseSubmitBehavior="false" runat="server" ID="btnValidateKey" Text="אימות" OnClick="BtnValidateKey_Click" Visible="false"/>
                 <br />
 
-                <asp:Button UseSubmitBehavior="false" runat="server" ID="btnValidateKey" Text="Show Alert" OnClick="BtnValidateKey_Click" Visible="false"/>
-                <br />
-
-            </div>
-        </div>
+                <div class="registration-container">
+                    <asp:Literal ID="Regiter" runat="server" Text="אין לך חשבון? הירשם" />
+                    <asp:LinkButton ID="RegiterLink" runat="server" OnClick="Register_Click" Text="כאן"></asp:LinkButton>
+                </div>
     </form>
 </body>
 </html>

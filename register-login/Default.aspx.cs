@@ -1,5 +1,7 @@
-﻿using System;
+﻿using register_user;
+using System;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace login_user
 {
@@ -20,10 +22,16 @@ namespace login_user
 
             if (loginKey > 0)
             {
+                txtEmail.Visible = false;
+                txtPassword.Visible = false;
+                btnLogin.Visible = false;
+                Regiter.Visible = false;
+                RegiterLink.Visible = false;
+
                 txtKey.Visible = true;
                 btnValidateKey.Visible = true;
-                LabelKey.Visible = true;
-                LabelKey.Text = loginKey.ToString();
+                title.Text = loginKey.ToString();
+
             }
             else
             {
@@ -48,7 +56,6 @@ namespace login_user
             {
                 // Invalid key, provide feedback to the user
                 lblMessage.Text = "Invalid key. Please try again.";
-                // Optionally, you might want to clear the TextBox or take other actions.
             }
         }
 

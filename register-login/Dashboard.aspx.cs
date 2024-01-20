@@ -14,7 +14,7 @@ namespace dashboard
 
                     if (!string.IsNullOrEmpty(role))
                     {
-                        h1.Text = $"שלום, {role}";
+                        Label.Text = $"Hello {role}";
                     }
                 }
                 else

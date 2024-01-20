@@ -2,9 +2,6 @@
 using System.Data.SqlClient;
 using System.Web.Configuration;
 using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Configuration;
 
 
 public static class DatabaseUtility
@@ -49,41 +46,36 @@ public static class DatabaseUtility
 
     public static int ValidateLogin(string email, string password)
     {
-        string selectUserDetails = "SELECT Password, Role FROM Users WHERE Email = @Email";
+        string selectUserDetails = "SELECT Password FROM Users WHERE Email = @Email";
 
         try
         {
             using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
+
                 using (var cmd = new SqlCommand(selectUserDetails, connection))
                 {
                     cmd.Parameters.AddWithValue("@Email", email);
 
-                    using (var reader = cmd.ExecuteReader())
+                    var result = cmd.ExecuteScalar();
+
+                    if (result != null)
                     {
-                        if (reader.Read())
+                        var storedPassword = result.ToString();
+
+                        bool isAuthenticated = BCrypt.Net.BCrypt.Verify(password, storedPassword);
+
+                        if (isAuthenticated)
                         {
-                            string storedPassword = reader["Password"].ToString();
-                            string selectRole = reader["Role"].ToString();
+                            Random random = new Random();
+                            int key = random.Next(1000, 10001);
 
-                            // Use BCrypt's Verify method to check if the passwords match
-                            bool isAuthenticated = BCrypt.Net.BCrypt.Verify(password, storedPassword);
+                            InsertKeyToDatabase(key, email);
 
-                            if (isAuthenticated)
-                            {
-                                HttpContext.Current.Session["UserRole"] = selectRole;
-
-                                Random random = new Random();
-                                int key = random.Next(1000, 10001);
-
-                                InsertKeyToDatabase(key, email);
-
-                                return key;
-                            }
+                            return key;
                         }
                     }
-
                     // Email not found or authentication failed
                     return 0;
                 }
@@ -105,9 +97,20 @@ public static class DatabaseUtility
             using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                string insertQuery = "INSERT INTO [Keys] ([Key], Email) VALUES (@Key, @Email)";
+                //string insertQuery = "INSERT INTO [Keys] ([Key], Email) VALUES (@Key, @Email)";
 
-                using (var cmd = new SqlCommand(insertQuery, connection))
+                string updateInsertQuery = @"
+                    IF EXISTS (SELECT 1 FROM [Keys] WHERE Email = @Email)
+                    BEGIN
+                        UPDATE [Keys] SET [Key] = @Key WHERE Email = @Email;
+                    END
+                    ELSE
+                    BEGIN
+                        INSERT INTO [Keys] ([Key], Email) VALUES (@Key, @Email);
+                    END
+                ";
+
+                using (var cmd = new SqlCommand(updateInsertQuery, connection))
                 {
                     cmd.Parameters.AddWithValue("@Key", key);
                     cmd.Parameters.AddWithValue("@Email", email);
@@ -138,17 +141,21 @@ public static class DatabaseUtility
             using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                string selectKeyQuery = "SELECT TOP 1 1 FROM [Keys] WHERE Email = @Email AND [Key] = @Key ORDER BY UserID DESC";
+
+                string selectKeyQuery = "SELECT [Role] FROM [Keys] " +
+                    "INNER JOIN Users ON Keys.email = Users.email " +
+                    "WHERE Keys.Email = @Email AND [Key] = @Key;";
 
                 using (var cmd = new SqlCommand(selectKeyQuery, connection))
                 {
                     cmd.Parameters.AddWithValue("@Email", email);
                     cmd.Parameters.AddWithValue("@Key", key);
 
-                    var result = cmd.ExecuteScalar();
+                    var result = cmd.ExecuteScalar().ToString();
 
                     if (result != null)
                     {
+                        HttpContext.Current.Session["UserRole"] = result;
                         return true;
                     }
                     return false;
@@ -159,7 +166,7 @@ public static class DatabaseUtility
         {
             // Log the exception
             Console.WriteLine($"Error getting last key from database: {ex.Message}");
-            return false; // Or some default value indicating an error
+            return false;
         }
     }
 }

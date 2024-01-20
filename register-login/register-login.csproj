@@ -141,6 +141,7 @@
   <ItemGroup>
     <Content Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\register-login20240119122023 - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
