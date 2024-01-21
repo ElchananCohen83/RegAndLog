@@ -5,6 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Login Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=no" />
     <style>
         body {
             background-color: #8D004C;
@@ -62,17 +63,10 @@
         }
 
         @media (max-width: 600px) {
-            .form-control {
-                width: 100%;
+            .form-container{
+                 width: 90%;
+                 margin: 20px;
             }
-
-            .registration-container {
-                text-align: left;
-            }
-
-            #btnLogin #btnValidateKey {
-                width: 100%;
-            }   
         }
     </style>
 </head>
